@@ -4,7 +4,7 @@
         <meta charset="unicode" />
         <title>saltweb</title>
         <link rel="stylesheet" type="text/css" href="css/mainpage.css">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/body.css">
     </head >
 
     <body>
@@ -20,25 +20,35 @@
 	    		</tr>
     		</tbody>
     	</table>
-    	<div class="container-left">
-        	<div class="row">
-        		<div class="sidebar" >
-        			<div>
-        				<ul >
-        					<li class="active">
-        						<a href="./index.html"> <i class="glyphicon glyphicon-dashboard"></i> 主页</a> 
-        					</li>
-        					<li>Saltkey</li>
-        					<li>Saltcmd</li>
-        					<li>Saltscript</li>
-        				</ul>
-        			</div>
-        		</div>
-        	</div>
-      	</div>
-      	<div class="container-right">
-      		<h1 class="page-header"> <ol class="breadcrumb"> <li class="active"> 信息展示 </li> </ol> </h1>
-      	</div>
+    	<table style="width: 100%; height: 100%; border: 3px; padding: 1px; border-style: groove; border-color: yellow;">
+    		<tbody>
+    			<tr>
+    				<td>
+    					<ul>
+    						<li>saltkey</li>
+    						<li>saltrun</li>
+    						<li>saltsls</li>
+    						<li>history</li>
+    					</ul>
+    				</td>
+    				<td style="left: 5px;">
+    					<input type="text" >
+    				</td>
+    				<td style="left: 5px;">
+    					<input type="text" >
+    				</td>
+    				<td style="left: 5px;">
+    					<input type="text" >
+    				</td>
+    				<td style="left: 5px;">
+    					<button type="button">RUN</button>
+    				</td>
+    				<td style="align: right;">
+    					<input type="text" >
+    				</td>
+    			</tr>
+    		</tbody>
+    	</table>
     </body>
 </html>
 
