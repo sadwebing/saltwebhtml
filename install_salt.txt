@@ -1,0 +1,29 @@
+redhat6 和 centos6 的安装:
+1. 安装源
+    # wget http://mirrors.kernel.org/fedora-epel/6/x86_64/epel-release-6-8.noarch.rpm
+    或者wget http://mirrors.sohu.com/fedora-epel/6/x86_64/epel-release-6-8.noarch.rpm
+    # rpm -ivh epel-release-6-8.noarch.rpm 
+
+2. 安装依赖包
+    # yum install python-jinja2 -y
+
+3. 安装saltstack
+    安装master
+    # yum install salt-master -y 
+    安装minion
+    # yum install salt-minion -y
+
+
+redhat5 和 centos5 的安装:
+1. 安装源
+    # wget https://repo.saltstack.com/yum/redhat/salt-repo-latest-1.el5.noarch.rpm
+    # rpm -ivh salt-repo-latest-1.el5.noarch.rpm
+
+2. 安装依赖包
+    # yum install python-jinja2 -y
+
+3. 安装saltstack
+    安装master
+    # yum install salt-master -y 
+    安装minion
+    # yum install salt-minion -y

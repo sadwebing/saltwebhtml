@@ -81,3 +81,22 @@
     list-style-image: initial;
 }
 
+.content {
+    font-size: 13px;
+    vertical-align: baseline;
+    line-height: 1px;
+    text-indent: 25px;
+    width: 98%;
+    background-color: #c0c0c0;
+}
+
+ul li a {
+    font-size: 15px;
+    font-family: "仿宋";
+    font-weight: 500;
+    line-height: 30px;
+    vertical-align: bottom;
+    letter-spacing: 0px;
+    color: #ffffff;
+    display: block;
+}
