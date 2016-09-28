@@ -1,0 +1,67 @@
+restful api配置环境部署：
+saltstack的api是在master和minion之外的一个独立的服务，所以需要独立的部署，api服务需要部署在master的服务器上。
+1. 部署salt-api服务
+# 环境部署，建议对salt-api使用HTTPS，生成签名证书；这里我们通过salt的模块来生成。
+# yum install gcc make python-devel libffi-devel -y
+# pip2.6 install PyOpenSSL
+
+#生成证书
+# salt-call tls.create_self_signed_cert
+local:
+    Created Private Key: "/etc/pki/tls/certs/localhost.key." Created Certificate: "/etc/pki/tls/certs/localhost.crt."
+#安装软件
+# yum install salt-api -y
+
+2. 配置用户以及权限
+# vim /etc/salt/master.d/eauth.conf
+external_auth: 
+    pam:  #认证模式，这里pam是linux本身的用户认证模式，salt还支持其他的认证模式（详情：https://docs.saltstack.com/en/latest/topics/eauth/index.html）
+        saltapi:  #用户名
+        - .  #用户权限
+        - '@wheel'
+        - '@runner'
+
+#添加用户
+# useradd -M -s /sbin/nologin saltapi
+# echo "ag866.com" |passwd saltapi --stdin
+
+3. 配置salt-api服务
+# vim /etc/salt/master.d/api.conf
+rest_cherrypy:
+    port: 8000
+    ssl_crt: /etc/pki/tls/certs/localhost.crt #使用前面生成的证书
+    ssl_key: /etc/pki/tls/certs/localhost.key
+
+4. 启动服务
+# /etc/init.d/salt-api restart
+Stopping salt-api daemon:                                  [FAILED]
+Starting salt-api daemon:                                  [  OK  ]
+# netstat -anpl |grep 8000        
+tcp        0      0 0.0.0.0:8000                0.0.0.0:*                   LISTEN      22711/python2.6 
+
+5. 测试
+更多API请参考：https://docs.saltstack.com/en/latest/ref/wheel/all/index.html
+https://docs.saltstack.com/en/latest/ref/netapi/all/salt.netapi.rest_cherrypy.html
+# curl -X POST -k https://172.20.10.107:8000/login -d username='saltapi' -d password='ag866.com' -d eauth='pam' |python -mjson.tool
+返回值:
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+242   197  197   197    0    45    615    140 --:--:-- --:--:-- --:--:--   573
+{
+    "return": [
+        {
+            "eauth": "pam", 
+            "expire": 1470563024.5221159, 
+            "perms": [
+                ".", 
+                "@wheel", 
+                "@runner"
+            ], 
+            "start": 1470519824.522115, 
+            "token": "3aabc5497cf1be68c2d3cb8c2dbc8c209332b3ac", 
+            "user": "saltapi"
+        }
+    ]
+}
+
+6. salt api接口编写

@@ -1,0 +1,96 @@
+使用Django模板系统的基本规则： 写模板，创建 Template 对象，创建 Context ， 调用 render() 方法:
+>>> from django.template import Context, Template
+>>> t = Template('My name is {{ name }}.')
+>>> c = Context({'name': 'Stephane'})
+>>> t.render(c)
+u'My name is Stephane.'
+
+以像这样使用同一模板源渲染多个context，只进行 一次模板创建然后多次调用render()方法
+渲染会更为高效：
+# Bad
+for name in ('John', 'Julie', 'Pat'):
+t = Template('Hello, {{ name }}')
+print t.render(Context({'name': name}))
+# Good
+t = Template('Hello, {{ name }}')
+for name in ('John', 'Julie', 'Pat'):
+print t.render(Context({'name': name}))
+
+在 Django 模板中遍历复杂数据结构的关键是句点字符 (.)
+最好是用几个例子来说明一下。 比如，假设你要向模板传递一个 Python 字典。 要通过字典键访问该字典的
+值，可使用一个句点：
+>>> from django.template import Template, Context
+>>> person = {'name': 'Sally', 'age': '43'}
+>>> t = Template('{{ person.name }} is {{ person.age }} years old.')
+>>> c = Context({'person': person})
+>>> t.render(c)
+u'Sally is 43 years old.'
+
+使用了一个自定义的类，演示了通过实例变量加一点(dots)来访问它的属性，这个方法适用于任意的对象。
+>>> from django.template import Template, Context
+>>> class Person(object):
+... def __init__(self, first_name, last_name):
+... self.first_name, self.last_name = first_name, last_name
+>>> t = Template('Hello, {{ person.first_name }} {{ person.last_name }}.')
+>>> c = Context({'person': Person('John', 'Smith')})
+>>> t.render(c)
+u'Hello, John Smith.'
+
+句点也可用于访问列表索引，例如：
+>>> from django.template import Template, Context
+>>> t = Template('Item 2 is {{ items.2 }}.')
+>>> c = Context({'items': ['apples', 'bananas', 'carrots']})
+>>> t.render(c)
+u'Item 2 is carrots.'
+不允许使用负数列表索引。 像 {{ items.‐1 }} 这样的模板变量将会引发`` TemplateSyntaxError``
+
+基本的模板标签和过滤器
+标签
+if/else
+{% if %} 标签检查(evaluate)一个变量，如果这个变量为真（即，变量存在，非空，不是布尔值假），系统会
+显示在 {% if %} 和 {% endif %} 之间的任何内容，例如：
+{% if today_is_weekend %}
+<p>Welcome to the weekend!</p>
+{% endif %}
+{% else %} 标签是可选的：
+{% if today_is_weekend %}
+<p>Welcome to the weekend!</p>
+{% else %}
+<p>Get back to work.</p>
+{% endif %}
+
+for
+{% for %} 允许我们在一个序列上迭代。 与Python的 for 语句的情形类似，循环语法是 for X in Y ，Y是要迭
+代的序列而X是在每一个特定的循环中使用的变量名称。 每一次循环中，模板系统会渲染在 {% for %} 和
+{% endfor %} 之间的所有内容。
+例如，给定一个运动员列表 athlete_list 变量，我们可以使用下面的代码来显示这个列表：
+<ul>
+{% for athlete in athlete_list %}
+<li>{{ athlete.name }}</li>
+{% endfor %}
+</ul>
+给标签增加一个 reversed 使得该列表被反向迭代：
+{% for athlete in athlete_list reversed %}
+...
+{% endfor %}
+
+ifequal/ifnotequal  【只有模板变量，字符串，整数和小数可以作为 {% ifequal %} 标签的参数。】
+Django模板系统压根儿就没想过实现一个全功能的编程语言，所以它不允许我们在模板中执行Python的语句
+（还是那句话，要了解更多请参看理念和限制小节）。 但是比较两个变量的值并且显示一些结果实在是个太常
+见的需求了，所以Django提供了 {% ifequal %} 标签供我们使用。
+{% ifequal %} 标签比较两个值，当他们相等时，显示在 {% ifequal %} 和 {% endifequal %} 之中所有的值。
+下面的例子比较两个模板变量 user 和 currentuser :
+{% ifequal user currentuser %}
+<h1>Welcome!</h1>
+{% endifequal %}
+
+
+注释
+就像HTML或者Python，Django模板语言同样提供代码注释。 注释使用 {# #} ：
+{# This is a comment #}
+
+如果要实现多行注释，可以使用`` {% comment %}`` 模板标签，就像这样：
+{% comment %}
+This is a
+multi‐line comment.
+{% endcomment %}
